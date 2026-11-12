@@ -26,7 +26,7 @@ a{color:inherit}
 <div class="wrap" style="max-width: 960px; margin: 0 auto; box-sizing: border-box; display: flex; flex-direction: column; gap: 48px">
 
 <header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 0; border-bottom: 1px solid #c9d6cd">
-<img src="logo.svg" alt="opt-in for marketing" style="height: 32px; display: block">
+<img src="logo-wordmark.svg" alt="opt-in for marketing" style="height: 32px; display: block">
 <nav aria-label="Main" style="display: flex; gap: 4px">
 <a class="nav" href="#latest" style="padding: 10px 14px; border-radius: 999px; font-size: 15px; font-weight: 600; text-decoration: none">Latest</a>
 <a class="nav" href="https://tally.so/r/Ar7eGl" target="_blank" rel="noopener noreferrer" style="padding: 10px 14px; border-radius: 999px; font-size: 15px; font-weight: 600; text-decoration: none">Submit</a>
@@ -66,7 +66,7 @@ a{color:inherit}
 
 <footer style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; padding-top: 24px; border-top: 1px solid #c9d6cd; font-size: 13px; line-height: 18px; font-weight: 500; color: #4b6358">
 <div style="display: flex; align-items: center; gap: 12px">
-<img src="mark.svg" alt="" style="height: 24px; width: 24px; display: block">
+<img src="logo-mark.svg" alt="" style="height: 24px; width: 24px; display: block">
 <span>A curated directory by opt-in for marketing. Suggestions welcome.</span>
 </div>
 <div style="display: flex; flex-wrap: wrap; gap: 12px 20px">
@@ -136,7 +136,13 @@ a{color:inherit}
       t('Onepage', 'https://onepage.io', 'One-page website and landing page builder.')
     ];
     const education = [
-      t('Digital Marketing Institute', 'https://digitalmarketinginstitute.com', 'Certified digital marketing courses and training.')
+      t('Digital Marketing Institute', 'https://digitalmarketinginstitute.com', 'Certified digital marketing courses and training.'),
+      t('CXL Institute', 'https://cxl.com', 'Deep-dive technical training and "Minidegrees" in conversion rate optimization (CRO), experimentation, B2B marketing, analytics, and AI marketing workflows, taught strictly by practitioners running high-budget campaigns.'),
+      t('Reforge', 'https://www.reforge.com', 'Cohort-based and on-demand programs created by former growth and marketing leaders (from companies like Meta, Lyft, and SurveyMonkey), focused on growth loops, attribution, monetization, and product marketing.'),
+      t('Demand Curve', 'https://www.demandcurve.com', 'Tactical, playbook-driven startup growth training featuring step-by-step execution projects, landing page/ad templates, and an AI growth co-pilot trained on thousands of startup campaigns.'),
+      t('Marketing Examples', 'https://marketingexamples.com', 'A curated, visual teardown gallery of real-world campaigns, landing pages, and emails that breaks down why specific copywriting and positioning choices convert—zero fluff, free to browse.'),
+      t('VeryGoodCopy', 'https://www.verygoodcopy.com', 'Bite-sized "micro-articles" and micro-interviews focused entirely on copywriting psychology, persuasive writing mechanics, and conversion heuristics.'),
+      t('opt-in for marketing', 'https://optinformarketing.substack.com', 'The weekly newsletter for B2B marketers who want real tactics, not thought leadership. Tools, teardowns, and experiments—straight to your inbox.')
     ];
     const email = [
       t('Substack', 'https://substack.com', 'Newsletters with built-in subscriptions.', true),
@@ -232,7 +238,7 @@ const H="font-family: 'Inter Tight', 'SF Pro Display', -apple-system, system-ui,
 const chev='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
 const cols={colLeft:[['Latest',latest],['AI',ai],['AI writing',aiWriting],['Design',design],['Automation',automation],['Social',social],['LinkedIn',linkedin],['Influencer marketing',influencer],['Paid media',paidMedia],['Education',education]],
 colRight:[['Content',content],['Editing',editing],['Operations',operations],['Email',email],['Website building',website],['Research',research],['Creative ops',creativeOps],['CRO',cro],['Local SEO',localSeo],['PR',pr],['Paid ads',paidAds]]};
-function favicon(url){try{return 'https://www.google.com/s2/favicons?domain='+new URL(url).hostname+'&sz=64';}catch(e){return '';}}
+function favicon(url){try{return 'https://'+new URL(url).hostname+'/favicon.ico';}catch(e){return '';}}
 function row(i){const fav=favicon(i.url);return '<a class="row" href="'+esc(i.url)+'" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: flex-start; gap: 14px; padding: 10px; margin: 0 -10px; border-radius: 12px; text-decoration: none; color: inherit"><div style="width:40px;height:40px;flex:none;border-radius:12px;border:1px solid #c9d6cd;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center;"><img src="'+fav+'" alt="" width="28" height="28" style="width:28px;height:28px;object-fit:contain;display:block;" onerror="this.parentNode.innerHTML=\'<span style=&quot;font-family:Inter Tight,sans-serif;font-size:16px;font-weight:800;color:#012b1b&quot;>'+esc(i.initial)+'</span>\'"></div><div style="min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; line-height: 22px; font-weight: 600">'+esc(i.name)+'</span><span style="font-size: 15px; line-height: 22px; color: #4b6358">'+esc(i.desc)+'</span></div></a>';}
 function card(title,items){const o=!!open[title];const can=items.length>LIMIT;
 return '<section style="background: #f5faee; border-radius: 12px; padding: 24px 24px 12px; display: flex; flex-direction: column; gap: 12px"><h3 style="margin: 0; '+H+'; font-size: 20px; line-height: 26px; font-weight: 700; letter-spacing: -0.01em">'+esc(title)+'</h3><div style="display: flex; flex-direction: column; gap: 2px">'+(o?items:items.slice(0,LIMIT)).map(row).join('')+'</div>'+(can?'<button type="button" class="more" data-t="'+esc(title)+'" aria-expanded="'+o+'" style="align-self: center; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border: 0; background: transparent; font-family: inherit; font-size: 15px; font-weight: 600; color: #012b1b; cursor: pointer">'+(o?'Show less':'See all ('+items.length+')')+' <span style="display: inline-flex; transform: '+(o?'rotate(180deg)':'none')+'">'+chev+'</span></button>':'')+'</section>';}
