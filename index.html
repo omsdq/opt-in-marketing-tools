@@ -115,7 +115,8 @@ a{color:inherit}
       t('Slack', 'https://slack.com', 'Team messaging and channels.', true),
       t('Looker Studio', 'https://lookerstudio.google.com', 'Free dashboards from your marketing data.'),
       t('Coupler.io', 'https://coupler.io', 'Pulls data from Google Ads, Meta, and GA4 directly into Sheets or Looker Studio on a schedule. Lean reporting without enterprise BI costs.'),
-      t('Google Analytics', 'https://analytics.google.com', 'Website and app traffic analytics.', true)
+      t('Google Analytics', 'https://analytics.google.com', 'Website and app traffic analytics.', true),
+      t('Plausible', 'https://plausible.io', 'Lightweight, open-source and privacy-friendly web analytics. An alternative to Google Analytics.', true)
     ];
     const automation = [
       t('Customer.io', 'https://customer.io', 'Behavior-based messaging and lifecycle automation.', true),
@@ -131,7 +132,8 @@ a{color:inherit}
       t('Gemini', 'https://gemini.google.com', 'Google’s AI assistant, connected to Google apps.'),
       t('Grok', 'https://grok.com', 'xAI’s AI assistant, built into X.'),
       t('ElevenLabs', 'https://elevenlabs.io', 'AI voice generation and text-to-speech.'),
-      t('Higgsfield', 'https://higgsfield.ai', 'AI video and image generation for creators.')
+      t('Higgsfield', 'https://higgsfield.ai', 'AI video and image generation for creators.'),
+      t('Ecom Agent OS', 'https://ecomagents.ai', 'AI agents that turn product and customer data into growth decisions and team handoffs for D2C brands.')
     ];
     const website = [
       t('Framer', 'https://www.framer.com', 'Design tool that publishes real, responsive websites.'),
@@ -156,7 +158,9 @@ a{color:inherit}
       t('Postmark', 'https://postmarkapp.com', 'Reliable transactional email delivery.'),
       t('Instantly', 'https://instantly.ai', 'Cold email outreach with built-in warm-up.'),
       t('Litmus', 'https://www.litmus.com', 'Preview and test emails across inboxes.'),
-      t('Flodesk', 'https://flodesk.com', 'Design-first email platform with flat-rate pricing regardless of list size. Made for creators and boutique brands.')
+      t('Flodesk', 'https://flodesk.com', 'Design-first email platform with flat-rate pricing regardless of list size. Made for creators and boutique brands.'),
+      t('Brevo', 'https://www.brevo.com', 'Email, SMS and WhatsApp marketing with automation workflows, SMTP relay and API.'),
+      t('PushOwl', 'https://pushowl.com', 'Email, SMS and web push marketing for Shopify stores, with campaigns and automations.')
     ];
     const social = [
       t('Buffer', 'https://buffer.com', 'Schedule and analyze social posts.'),
@@ -189,7 +193,9 @@ a{color:inherit}
       t('Meta Ads Manager', 'https://www.facebook.com/business/tools/ads-manager', 'Run ads across Facebook and Instagram.'),
       t('LinkedIn Campaign Manager', 'https://www.linkedin.com/campaignmanager', 'B2B ads targeted by role and company.'),
       t('TikTok Ads Manager', 'https://ads.tiktok.com', 'Short-video ads and audience tools.'),
-      t('Microsoft Advertising', 'https://ads.microsoft.com', 'Search ads across Bing and partner networks.')
+      t('Microsoft Advertising', 'https://ads.microsoft.com', 'Search ads across Bing and partner networks.'),
+      t('Ad Studio by Brevo', 'https://ads.brevo.com', 'An AI ads agent that creates on-brand static, video and UGC ads from your store content.'),
+      t('Winning Statics', 'https://winningstatics.com', 'New static ads every week, modeled on the ads competitors keep running in your niche.')
     ];
     const paidMedia = [
       t('Supermetrics', 'https://supermetrics.com', 'Pull ad data into sheets and dashboards.'),
@@ -199,6 +205,12 @@ a{color:inherit}
       t('Google Ads Transparency Center', 'https://adstransparency.google.com', 'See ads any advertiser runs on Google.')
     ];
     const latest = [
+      t('Brevo', 'https://www.brevo.com', 'Email, SMS and WhatsApp marketing with automation workflows, SMTP relay and API.'),
+      t('PushOwl', 'https://pushowl.com', 'Email, SMS and web push marketing for Shopify stores, with campaigns and automations.'),
+      t('Ad Studio by Brevo', 'https://ads.brevo.com', 'An AI ads agent that creates on-brand static, video and UGC ads from your store content.'),
+      t('Winning Statics', 'https://winningstatics.com', 'New static ads every week, modeled on the ads competitors keep running in your niche.'),
+      t('Ecom Agent OS', 'https://ecomagents.ai', 'AI agents that turn product and customer data into growth decisions and team handoffs for D2C brands.'),
+      t('Plausible', 'https://plausible.io', 'Lightweight, open-source and privacy-friendly web analytics. An alternative to Google Analytics.'),
       t('Higgsfield', 'https://higgsfield.ai', 'AI video and image generation for creators.'),
       t('ElevenLabs', 'https://elevenlabs.io', 'AI voice generation and text-to-speech.'),
       t('Instantly', 'https://instantly.ai', 'Cold email outreach with built-in warm-up.'),
@@ -243,7 +255,8 @@ const chev='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="
 const cols={colLeft:[['Latest',latest],['AI',ai],['AI writing',aiWriting],['Design',design],['Automation',automation],['Social',social],['LinkedIn',linkedin],['Influencer marketing',influencer],['Paid media',paidMedia],['Education',education]],
 colRight:[['Content',content],['Editing',editing],['Operations',operations],['Email',email],['Website building',website],['Research',research],['Creative ops',creativeOps],['CRO',cro],['Local SEO',localSeo],['PR',pr],['Paid ads',paidAds]]};
 function favicon(url){try{return 'https://www.google.com/s2/favicons?domain='+new URL(url).hostname+'&sz=64';}catch(e){return '';}}
-function row(i){const fav=favicon(i.url);return '<a class="row" href="'+esc(i.url)+'" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: flex-start; gap: 14px; padding: 10px; margin: 0 -10px; border-radius: 12px; text-decoration: none; color: inherit"><div style="width:40px;height:40px;flex:none;border-radius:12px;border:1px solid #c9d6cd;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center;"><img src="'+fav+'" alt="" width="28" height="28" style="width:28px;height:28px;object-fit:contain;display:block;" onerror="this.parentNode.innerHTML=\'<span style=&quot;font-family:Inter Tight,sans-serif;font-size:16px;font-weight:800;color:#012b1b&quot;>'+esc(i.initial)+'</span>\'"></div><div style="min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; line-height: 22px; font-weight: 600">'+esc(i.name)+'</span><span style="font-size: 15px; line-height: 22px; color: #4b6358">'+esc(i.desc)+'</span></div></a>';}
+function withUtm(url){try{const u=new URL(url);if(u.hostname.endsWith('optinformarketing.substack.com'))return url;u.searchParams.set('utm_source','optinformarketing');u.searchParams.set('utm_medium','directory');return u.toString();}catch(e){return url;}}
+function row(i){const fav=favicon(i.url);return '<a class="row" href="'+esc(withUtm(i.url))+'" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: flex-start; gap: 14px; padding: 10px; margin: 0 -10px; border-radius: 12px; text-decoration: none; color: inherit"><div style="width:40px;height:40px;flex:none;border-radius:12px;border:1px solid #c9d6cd;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center;"><img src="'+fav+'" alt="" width="28" height="28" style="width:28px;height:28px;object-fit:contain;display:block;" onerror="this.parentNode.innerHTML=\'<span style=&quot;font-family:Inter Tight,sans-serif;font-size:16px;font-weight:800;color:#012b1b&quot;>'+esc(i.initial)+'</span>\'"></div><div style="min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; line-height: 22px; font-weight: 600">'+esc(i.name)+'</span><span style="font-size: 15px; line-height: 22px; color: #4b6358">'+esc(i.desc)+'</span></div></a>';}
 function card(title,items){const o=!!open[title];const can=items.length>LIMIT;
 return '<section style="background: #f5faee; border-radius: 12px; padding: 24px 24px 12px; display: flex; flex-direction: column; gap: 12px"><h3 style="margin: 0; '+H+'; font-size: 20px; line-height: 26px; font-weight: 700; letter-spacing: -0.01em">'+esc(title)+'</h3><div style="display: flex; flex-direction: column; gap: 2px">'+(o?items:items.slice(0,LIMIT)).map(row).join('')+'</div>'+(can?'<button type="button" class="more" data-t="'+esc(title)+'" aria-expanded="'+o+'" style="align-self: center; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border: 0; background: transparent; font-family: inherit; font-size: 15px; font-weight: 600; color: #012b1b; cursor: pointer">'+(o?'Show less':'See all ('+items.length+')')+' <span style="display: inline-flex; transform: '+(o?'rotate(180deg)':'none')+'">'+chev+'</span></button>':'')+'</section>';}
 function render(){for(const k in cols)document.getElementById(k).innerHTML=cols[k].map(c=>card(c[0],c[1])).join('');}
