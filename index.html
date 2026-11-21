@@ -16,9 +16,10 @@
 .chip:hover{border-color:#012b1b!important}
 .chip:focus-visible,.chip-clear:focus-visible{outline:2px solid #3d6b14;outline-offset:3px}
 body{margin:0}
+#q:focus-visible{outline:2px solid #3d6b14;outline-offset:3px}
 .save:hover{background:#e5ffb8}
 .save:focus-visible,.unsave:focus-visible,.stack-copy:focus-visible,.stack-clear:focus-visible{outline:2px solid #3d6b14;outline-offset:3px}
-#mystack section .stack-copy:focus-visible,#mystack section .stack-clear:focus-visible{outline-color:#bcf35b}
+#mystack section .stack-copy:focus-visible,#mystack section .stack-link:focus-visible,#mystack section .stack-mail:focus-visible,#mystack section .stack-clear:focus-visible{outline-color:#bcf35b}
 a{color:inherit}
 .row:hover{background:#ffffff}
 .nav:hover{background:#f5faee}
@@ -65,7 +66,9 @@ a{color:inherit}
 <a class="ghost" href="https://tally.so/r/Ar7eGl" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; height: 44px; box-sizing: border-box; padding: 0 24px; border: 2px solid #012b1b; border-radius: 999px; font-size: 15px; font-weight: 600; color: #012b1b; text-decoration: none">Suggest a tool</a>
 </div>
 
+<div id="sharedstack"></div>
 <div id="mystack"></div>
+<div style="display:flex;flex-direction:column;gap:8px"><label for="q" style="font-size:12px;line-height:16px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#4b6358">Search tools</label><input id="q" type="search" autocomplete="off" style="height:44px;box-sizing:border-box;width:100%;max-width:480px;padding:0 18px;border:1px solid #c9d6cd;border-radius:999px;background:#ffffff;color:#012b1b;font-family:inherit;font-size:15px"></div>
 <div id="usecases" style="display: flex; flex-wrap: wrap; gap: 8px"></div>
 <div id="usecase-info" aria-live="polite" style="display: none; font-size: 15px; line-height: 22px; color: #4b6358"></div>
 <div id="latest" style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
@@ -255,7 +258,7 @@ a{color:inherit}
     ];
 
 const LIMIT=5, open={};
-let active=null;
+let active=null,qs='';
 const UC=[
 ['lead','Capture leads','Turn visitors into leads or subscribers.'],
 ['newsletter','Grow your newsletter','Build, send and improve an email newsletter.'],
@@ -289,10 +292,10 @@ const USE={
 'Foreplay':['ads','research'],'Lasso':['research'],
 'Microsoft Clarity':['measure'],'Winware.ai':['lead'],'Tally':['lead'],'Local Falcon':['measure']
 };
-const useMatch=i=>(USE[i.name]||[]).indexOf(active)>-1;
+const useMatch=i=>(!active||(USE[i.name]||[]).indexOf(active)>-1)&&(!qs||(i.name+' '+i.desc).toLowerCase().indexOf(qs)>-1);
 function chips(){const el=document.getElementById('usecases');if(!el)return;
 el.innerHTML='<span style="font-size:12px;line-height:16px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#4b6358;width:100%">What do you want to do?</span>'+UC.map(u=>{const on=active===u[0];return '<button type="button" class="chip" data-u="'+u[0]+'" aria-pressed="'+on+'" style="min-height:44px;padding:0 18px;border-radius:999px;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;border:1px solid '+(on?'#012b1b':'#c9d6cd')+';background:'+(on?'#012b1b':'#ffffff')+';color:'+(on?'#e5ffb8':'#012b1b')+'">'+esc(u[1])+'</button>';}).join('');
-const info=document.getElementById('usecase-info');if(info){if(active){const u=UC.filter(x=>x[0]===active)[0];let n=0;for(const k in cols)cols[k].forEach(c=>{if(c[0]!=='Latest')n+=c[1].filter(useMatch).length;});info.innerHTML='<b>'+esc(u[1])+'</b> \u00b7 '+esc(u[2])+' \u00b7 '+n+' tools <button type="button" class="chip-clear" style="margin-left:8px;min-height:44px;border:0;background:transparent;font-family:inherit;font-size:15px;font-weight:600;color:#3d6b14;text-decoration:underline;cursor:pointer">Show all</button>';info.style.display='block';}else{info.style.display='none';info.innerHTML='';}}}
+}
 
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
 const H="font-family: 'Inter Tight', 'SF Pro Display', -apple-system, system-ui, sans-serif";
@@ -306,24 +309,47 @@ function persist(){try{localStorage.setItem(SK,JSON.stringify(stack));}catch(e){
 const saved=n=>stack.indexOf(n)>-1;
 function stackUI(){const el=document.getElementById('mystack');if(!el)return;
 if(!stack.length){el.innerHTML='<p style="margin:0;font-size:15px;line-height:22px;color:#4b6358">Tap the bookmark on any tool to build your own stack. It stays in this browser.</p>';return;}
-el.innerHTML='<section style="background:#012b1b;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:16px"><h3 style="margin:0;'+H+';font-size:20px;line-height:26px;font-weight:700;letter-spacing:-0.01em;color:#ffffff">My stack \u00b7 '+stack.length+'</h3><div style="display:flex;flex-wrap:wrap;gap:8px">'+stack.map(n=>'<span style="display:inline-flex;align-items:center;border-radius:999px;background:#e5ffb8;color:#012b1b;font-size:15px;font-weight:600"><a href="'+esc(withUtm(ALL[n].url))+'" target="_blank" rel="noopener noreferrer" style="padding:10px 4px 10px 16px;text-decoration:none">'+esc(n)+'</a><button type="button" class="unsave" data-n="'+esc(n)+'" aria-label="Remove '+esc(n)+' from my stack" style="width:44px;height:44px;border:0;background:transparent;color:#012b1b;font-size:18px;cursor:pointer;border-radius:999px">\u00d7</button></span>').join('')+'</div><div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px"><button type="button" class="stack-copy" style="height:44px;padding:0 24px;border:0;border-radius:999px;background:#bcf35b;color:#012b1b;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer">Copy list</button><button type="button" class="stack-clear" style="min-height:44px;padding:0 16px;border:0;background:transparent;color:#e5ffb8;font-family:inherit;font-size:15px;font-weight:600;text-decoration:underline;cursor:pointer">Clear</button></div></section>';}
+el.innerHTML='<section style="background:#012b1b;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:16px"><h3 style="margin:0;'+H+';font-size:20px;line-height:26px;font-weight:700;letter-spacing:-0.01em;color:#ffffff">My stack \u00b7 '+stack.length+'</h3><div style="display:flex;flex-wrap:wrap;gap:8px">'+stack.map(n=>'<span style="display:inline-flex;align-items:center;border-radius:999px;background:#e5ffb8;color:#012b1b;font-size:15px;font-weight:600"><a href="'+esc(withUtm(ALL[n].url))+'" target="_blank" rel="noopener noreferrer" style="padding:10px 4px 10px 16px;text-decoration:none">'+esc(n)+'</a><button type="button" class="unsave" data-n="'+esc(n)+'" aria-label="Remove '+esc(n)+' from my stack" style="width:44px;height:44px;border:0;background:transparent;color:#012b1b;font-size:18px;cursor:pointer;border-radius:999px">\u00d7</button></span>').join('')+'</div><div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px"><button type="button" class="stack-link" style="height:44px;padding:0 24px;border:0;border-radius:999px;background:#bcf35b;color:#012b1b;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer">Copy share link</button><a class="stack-mail" href="'+esc(mailHref())+'" style="'+BTN2+'">Email me this list</a><button type="button" class="stack-copy" style="'+BTN2+'">Copy list</button><button type="button" class="stack-clear" style="min-height:44px;padding:0 16px;border:0;background:transparent;color:#e5ffb8;font-family:inherit;font-size:15px;font-weight:600;text-decoration:underline;cursor:pointer">Clear</button></div><p style="margin:0;font-size:15px;line-height:22px;color:#e5ffb8">Want new tools like these? <a href="'+esc(subUrl())+'" target="_blank" rel="noopener noreferrer" style="color:#bcf35b;text-decoration:underline">Get them in your inbox</a></p></section>';}
+let shared=[];try{const g=new URLSearchParams(location.search).get('stack');if(g)shared=g.split('~').filter((n,i,a)=>ALL[n]&&a.indexOf(n)===i);}catch(e){}
+const shareUrl=()=>location.origin+location.pathname+'?stack='+stack.map(encodeURIComponent).join('~');
+const listText=()=>stack.map(n=>n+' - '+ALL[n].url).join('\n');
+const mailHref=()=>'mailto:?subject='+encodeURIComponent('My marketing tool stack')+'&body='+encodeURIComponent('My marketing tool stack\n\n'+listText()+'\n\nShare link: '+shareUrl());
+const subUrl=()=>'https://tally.so/r/rDjMM2?stack='+encodeURIComponent(stack.join(', '));
+const BTN2='min-height:44px;box-sizing:border-box;padding:0 20px;border:2px solid #e5ffb8;border-radius:999px;background:transparent;color:#e5ffb8;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;text-decoration:none';
+function sharedUI(){const el=document.getElementById('sharedstack');if(!el)return;
+if(!shared.length){el.innerHTML='';return;}
+const fresh=shared.filter(n=>!saved(n)).length;
+el.innerHTML='<section style="background:#e5ffb8;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:16px"><h3 style="margin:0;'+H+';font-size:20px;line-height:26px;font-weight:700;letter-spacing:-0.01em">Shared stack · '+shared.length+'</h3><p style="margin:0;font-size:15px;line-height:22px">Someone sent you their tool stack.</p><div style="display:flex;flex-wrap:wrap;gap:8px">'+shared.map(n=>'<a href="'+esc(withUtm(ALL[n].url))+'" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;min-height:44px;box-sizing:border-box;padding:0 16px;border-radius:999px;background:#ffffff;color:#012b1b;font-size:15px;font-weight:600;text-decoration:none">'+esc(n)+'</a>').join('')+'</div><div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px">'+(fresh?'<button type="button" class="shared-add" style="height:44px;padding:0 24px;border:0;border-radius:999px;background:#012b1b;color:#e5ffb8;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer">Save all to my stack</button>':'')+'<button type="button" class="shared-dismiss" style="min-height:44px;padding:0 16px;border:0;background:transparent;color:#012b1b;font-family:inherit;font-size:15px;font-weight:600;text-decoration:underline;cursor:pointer">Dismiss</button></div></section>';}
 function favicon(url){try{return 'https://www.google.com/s2/favicons?domain='+new URL(url).hostname+'&sz=64';}catch(e){return '';}}
 function withUtm(url){try{const u=new URL(url);if(u.hostname.endsWith('optinformarketing.substack.com'))return url;u.searchParams.set('utm_source','optinformarketing');u.searchParams.set('utm_medium','directory');return u.toString();}catch(e){return url;}}
 function rowA(i){const fav=favicon(i.url);return '<a class="row" href="'+esc(withUtm(i.url))+'" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: flex-start; gap: 14px; padding: 10px 54px 10px 10px; margin: 0; border-radius: 12px; text-decoration: none; color: inherit"><div style="width:40px;height:40px;flex:none;border-radius:12px;border:1px solid #c9d6cd;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center;"><img src="'+fav+'" alt="" width="28" height="28" style="width:28px;height:28px;object-fit:contain;display:block;" onerror="this.parentNode.innerHTML=\'<span style=&quot;font-family:Inter Tight,sans-serif;font-size:16px;font-weight:800;color:#012b1b&quot;>'+esc(i.initial)+'</span>\'"></div><div style="min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; line-height: 22px; font-weight: 600">'+esc(i.name)+'</span><span style="font-size: 15px; line-height: 22px; color: #4b6358">'+esc(i.desc)+'</span></div></a>';}
 function row(i){const on=saved(i.name);return '<div style="position:relative;margin:0 -10px">'+rowA(i)+'<button type="button" class="save" data-n="'+esc(i.name)+'" aria-pressed="'+on+'" aria-label="Save '+esc(i.name)+' to my stack" style="position:absolute;right:4px;top:9px;width:44px;height:44px;border:0;border-radius:999px;background:transparent;color:#012b1b;display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="'+(on?'currentColor':'none')+'" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4z"/></svg></button></div>';}
 function card(title,items){const o=!!open[title];const can=items.length>LIMIT;
 return '<section style="background: #f5faee; border-radius: 12px; padding: 24px 24px 12px; display: flex; flex-direction: column; gap: 12px"><h3 style="margin: 0; '+H+'; font-size: 20px; line-height: 26px; font-weight: 700; letter-spacing: -0.01em">'+esc(title)+'</h3><div style="display: flex; flex-direction: column; gap: 2px">'+(o?items:items.slice(0,LIMIT)).map(row).join('')+'</div>'+(can?'<button type="button" class="more" data-t="'+esc(title)+'" aria-expanded="'+o+'" style="align-self: center; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border: 0; background: transparent; font-family: inherit; font-size: 15px; font-weight: 600; color: #012b1b; cursor: pointer">'+(o?'Show less':'See all ('+items.length+')')+' <span style="display: inline-flex; transform: '+(o?'rotate(180deg)':'none')+'">'+chev+'</span></button>':'')+'</section>';}
-function render(){chips();stackUI();for(const k in cols){document.getElementById(k).innerHTML=cols[k].map(c=>{
-if(!active)return card(c[0],c[1]);
+function infoUI(){const info=document.getElementById('usecase-info');if(!info)return;
+if(!active&&!qs){info.style.display='none';info.innerHTML='';return;}
+let n=0;for(const k in cols)cols[k].forEach(c=>{if(c[0]!=='Latest')n+=c[1].filter(useMatch).length;});
+const u=active?UC.filter(x=>x[0]===active)[0]:null;
+info.innerHTML=(u?'<b>'+esc(u[1])+'</b> · '+esc(u[2])+' · ':'')+(qs?'Search “'+esc(qs)+'” · ':'')+n+' tools <button type="button" class="chip-clear" style="margin-left:8px;min-height:44px;border:0;background:transparent;font-family:inherit;font-size:15px;font-weight:600;color:#3d6b14;text-decoration:underline;cursor:pointer">Show all</button>';info.style.display='block';}
+function render(){chips();stackUI();sharedUI();infoUI();const filtering=!!(active||qs);let any=false;
+for(const k in cols){document.getElementById(k).innerHTML=cols[k].map(c=>{
+if(!filtering)return card(c[0],c[1]);
 if(c[0]==='Latest')return '';
 const m=c[1].filter(useMatch);
-return m.length?cardAll(c[0],m):'';}).join('');}}
+if(m.length)any=true;
+return m.length?cardAll(c[0],m):'';}).join('');}
+if(filtering&&!any)document.getElementById('colLeft').innerHTML='<p style="margin:0;font-size:15px;line-height:22px;color:#4b6358">No tools found. Try another word, or <a href="https://tally.so/r/Ar7eGl" target="_blank" rel="noopener noreferrer" style="color:#3d6b14;text-decoration:underline">suggest a tool</a>.</p>';}
 function cardAll(title,items){return '<section style="background: #f5faee; border-radius: 12px; padding: 24px 24px 12px; display: flex; flex-direction: column; gap: 12px"><h3 style="margin: 0; '+H+'; font-size: 20px; line-height: 26px; font-weight: 700; letter-spacing: -0.01em">'+esc(title)+'</h3><div style="display: flex; flex-direction: column; gap: 2px">'+items.map(row).join('')+'</div></section>';}
-document.addEventListener('click',e=>{const c=e.target.closest('.chip');if(c){active=(active===c.dataset.u)?null:c.dataset.u;render();return;}if(e.target.closest('.chip-clear')){active=null;render();}});
+document.addEventListener('click',e=>{const c=e.target.closest('.chip');if(c){active=(active===c.dataset.u)?null:c.dataset.u;render();return;}if(e.target.closest('.chip-clear')){active=null;qs='';const qi=document.getElementById('q');if(qi)qi.value='';render();}});
 document.addEventListener('click',e=>{const s=e.target.closest('.save,.unsave');if(s){const n=s.dataset.n,i=stack.indexOf(n);if(i>-1)stack.splice(i,1);else stack.push(n);persist();render();const f=document.querySelector('.save[data-n="'+CSS.escape(n)+'"]');if(f)f.focus();return;}
 if(e.target.closest('.stack-clear')){stack=[];persist();render();return;}
 const cp=e.target.closest('.stack-copy');if(cp){const txt=stack.map(n=>n+' - '+ALL[n].url).join('\n');if(navigator.clipboard)navigator.clipboard.writeText(txt).then(()=>{cp.textContent='Copied';setTimeout(()=>{cp.textContent='Copy list';},1500);}).catch(()=>{});}});
+document.addEventListener('click',e=>{
+if(e.target.closest('.shared-add')){shared.forEach(n=>{if(!saved(n))stack.push(n);});persist();render();return;}
+if(e.target.closest('.shared-dismiss')){shared=[];try{history.replaceState(null,'',location.pathname);}catch(x){}render();return;}
+const lk=e.target.closest('.stack-link');if(lk&&navigator.clipboard){navigator.clipboard.writeText(shareUrl()).then(()=>{lk.textContent='Link copied';setTimeout(()=>{lk.textContent='Copy share link';},1500);}).catch(()=>{});}});
 document.addEventListener('click',e=>{const b=e.target.closest('.more');if(b){open[b.dataset.t]=!open[b.dataset.t];render();}});
+const qi=document.getElementById('q');if(qi){qi.placeholder='Search '+Object.keys(ALL).length+' tools';qi.addEventListener('input',()=>{qs=qi.value.trim().toLowerCase();render();});}
 render();
 const em=document.getElementById('email'),sub=document.querySelector('a.sub');
 em.addEventListener('input',()=>{sub.href='https://tally.so/r/rDjMM2'+(em.value?'?email='+encodeURIComponent(em.value):'');});
