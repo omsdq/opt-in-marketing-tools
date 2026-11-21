@@ -13,6 +13,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+.chip:hover{border-color:#012b1b!important}
+.chip:focus-visible,.chip-clear:focus-visible{outline:2px solid #3d6b14;outline-offset:3px}
 body{margin:0}
 a{color:inherit}
 .row:hover{background:#ffffff}
@@ -60,6 +62,8 @@ a{color:inherit}
 <a class="ghost" href="https://tally.so/r/Ar7eGl" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; height: 44px; box-sizing: border-box; padding: 0 24px; border: 2px solid #012b1b; border-radius: 999px; font-size: 15px; font-weight: 600; color: #012b1b; text-decoration: none">Suggest a tool</a>
 </div>
 
+<div id="usecases" style="display: flex; flex-wrap: wrap; gap: 8px"></div>
+<div id="usecase-info" aria-live="polite" style="display: none; font-size: 15px; line-height: 22px; color: #4b6358"></div>
 <div id="latest" style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
 
 <div id="colLeft" style="flex: 1 1 400px; min-width: 0; display: flex; flex-direction: column; gap: 24px"></div>
@@ -247,6 +251,45 @@ a{color:inherit}
     ];
 
 const LIMIT=5, open={};
+let active=null;
+const UC=[
+['lead','Capture leads','Turn visitors into leads or subscribers.'],
+['newsletter','Grow your newsletter','Build, send and improve an email newsletter.'],
+['content','Create content','Write, design and edit posts, videos and visuals.'],
+['social','Grow on social','Schedule posts and work with creators.'],
+['ads','Run paid ads','Plan, launch and learn from paid campaigns.'],
+['measure','Measure & report','See what works and report on it.'],
+['research','Research your market','Find audiences, trends and competitor moves.'],
+['automate','Automate & retain','Save time and keep people coming back.'],
+['press','Get press','Find journalists and track mentions.'],
+['learn','Learn','Courses and teardowns to level up.']
+];
+const USE={
+'Notion':['content'],'Grammarly':['content'],'Hemingway Editor':['content'],'Ahrefs':['research','content'],'Google Search Console':['measure','research'],
+'Descript':['content'],'CapCut':['content','social'],'DaVinci Resolve':['content'],'Adobe Premiere Pro':['content'],'Audacity':['content'],'Opus Clip':['content','social'],
+'Adobe Creative Cloud':['content'],'Figma':['content'],'Canva':['content','social'],'Adobe Illustrator':['content'],'Affinity':['content'],'Dupe Photos':['content','social'],'Fontshare':['content'],
+'Asana':['automate'],'Airtable':['automate','measure'],'Slack':['automate'],'Looker Studio':['measure'],'Coupler.io':['measure','automate'],'Google Analytics':['measure'],'Plausible':['measure'],
+'Customer.io':['automate','newsletter'],'HubSpot':['automate','lead'],'Zapier':['automate'],'Make':['automate'],'n8n':['automate'],
+'Claude':['content','research'],'ChatGPT':['content','research'],'Perplexity':['research'],'Gemini':['content','research'],'Grok':['research'],'ElevenLabs':['content'],'Higgsfield':['content','social'],
+'Framer':['lead'],'Wix':['lead'],'Squarespace':['lead'],'Onepage':['lead'],
+'Digital Marketing Institute':['learn'],'CXL Institute':['learn'],'Reforge':['learn'],'Demand Curve':['learn'],'Marketing Examples':['learn'],'VeryGoodCopy':['learn'],'opt-in for marketing':['learn'],
+'Substack':['newsletter'],'Beehiiv':['newsletter'],'Klaviyo':['newsletter','automate'],'Mailchimp':['newsletter'],'Postmark':['automate'],'Instantly':['lead'],'Litmus':['newsletter'],'Flodesk':['newsletter'],'Brevo':['newsletter','automate'],'PushOwl':['automate','lead'],
+'Buffer':['social'],'Later':['social'],'Hootsuite':['social'],'Planable':['social'],'Metricool':['social','measure'],'Sprout Social':['social','measure'],'Linktree':['social','lead'],'Pinterest':['social','ads'],'Reddit':['research','social'],
+'Muck Rack':['press'],'Meltwater':['press','research'],'Cision':['press'],'Prowly':['press'],'Google Alerts':['press','research'],'Otterly.ai':['press','measure'],
+'Modash':['social'],'Aspire':['social'],'Upfluence':['social'],'CreatorIQ':['social'],'GRIN':['social'],
+'Google Ads':['ads','lead'],'Meta Ads Manager':['ads','lead'],'LinkedIn Campaign Manager':['ads','lead'],'TikTok Ads Manager':['ads'],'Microsoft Advertising':['ads'],'Ad Studio by Brevo':['ads','content'],'Winning Statics':['ads','content'],
+'Supermetrics':['measure'],'Triple Whale':['measure','ads'],'Motion':['measure','ads'],'Meta Ad Library':['research','ads'],'Google Ads Transparency Center':['research','ads'],
+'Kleo':['social','measure'],'Taplio':['social'],'Shield Analytics':['social','measure'],
+'Wispr Flow':['content'],'Writesonic':['content'],
+'SparkToro':['research'],'Exploding Topics':['research','content'],'Milled':['research','newsletter'],'Wappalyzer':['research'],'Keyworddit':['research','content'],'F5Bot':['research'],
+'Foreplay':['ads','research'],'Lasso':['research'],
+'Microsoft Clarity':['measure'],'Winware.ai':['lead'],'Tally':['lead'],'Local Falcon':['measure']
+};
+const useMatch=i=>(USE[i.name]||[]).indexOf(active)>-1;
+function chips(){const el=document.getElementById('usecases');if(!el)return;
+el.innerHTML='<span style="font-size:12px;line-height:16px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#4b6358;width:100%">What do you want to do?</span>'+UC.map(u=>{const on=active===u[0];return '<button type="button" class="chip" data-u="'+u[0]+'" aria-pressed="'+on+'" style="min-height:44px;padding:0 18px;border-radius:999px;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;border:1px solid '+(on?'#012b1b':'#c9d6cd')+';background:'+(on?'#012b1b':'#ffffff')+';color:'+(on?'#e5ffb8':'#012b1b')+'">'+esc(u[1])+'</button>';}).join('');
+const info=document.getElementById('usecase-info');if(info){if(active){const u=UC.filter(x=>x[0]===active)[0];let n=0;for(const k in cols)cols[k].forEach(c=>{if(c[0]!=='Latest')n+=c[1].filter(useMatch).length;});info.innerHTML='<b>'+esc(u[1])+'</b> \u00b7 '+esc(u[2])+' \u00b7 '+n+' tools <button type="button" class="chip-clear" style="margin-left:8px;min-height:44px;border:0;background:transparent;font-family:inherit;font-size:15px;font-weight:600;color:#3d6b14;text-decoration:underline;cursor:pointer">Show all</button>';info.style.display='block';}else{info.style.display='none';info.innerHTML='';}}}
+
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
 const H="font-family: 'Inter Tight', 'SF Pro Display', -apple-system, system-ui, sans-serif";
 const chev='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
@@ -257,7 +300,13 @@ function withUtm(url){try{const u=new URL(url);if(u.hostname.endsWith('optinform
 function row(i){const fav=favicon(i.url);return '<a class="row" href="'+esc(withUtm(i.url))+'" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: flex-start; gap: 14px; padding: 10px; margin: 0 -10px; border-radius: 12px; text-decoration: none; color: inherit"><div style="width:40px;height:40px;flex:none;border-radius:12px;border:1px solid #c9d6cd;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center;"><img src="'+fav+'" alt="" width="28" height="28" style="width:28px;height:28px;object-fit:contain;display:block;" onerror="this.parentNode.innerHTML=\'<span style=&quot;font-family:Inter Tight,sans-serif;font-size:16px;font-weight:800;color:#012b1b&quot;>'+esc(i.initial)+'</span>\'"></div><div style="min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; line-height: 22px; font-weight: 600">'+esc(i.name)+'</span><span style="font-size: 15px; line-height: 22px; color: #4b6358">'+esc(i.desc)+'</span></div></a>';}
 function card(title,items){const o=!!open[title];const can=items.length>LIMIT;
 return '<section style="background: #f5faee; border-radius: 12px; padding: 24px 24px 12px; display: flex; flex-direction: column; gap: 12px"><h3 style="margin: 0; '+H+'; font-size: 20px; line-height: 26px; font-weight: 700; letter-spacing: -0.01em">'+esc(title)+'</h3><div style="display: flex; flex-direction: column; gap: 2px">'+(o?items:items.slice(0,LIMIT)).map(row).join('')+'</div>'+(can?'<button type="button" class="more" data-t="'+esc(title)+'" aria-expanded="'+o+'" style="align-self: center; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border: 0; background: transparent; font-family: inherit; font-size: 15px; font-weight: 600; color: #012b1b; cursor: pointer">'+(o?'Show less':'See all ('+items.length+')')+' <span style="display: inline-flex; transform: '+(o?'rotate(180deg)':'none')+'">'+chev+'</span></button>':'')+'</section>';}
-function render(){for(const k in cols)document.getElementById(k).innerHTML=cols[k].map(c=>card(c[0],c[1])).join('');}
+function render(){chips();for(const k in cols){document.getElementById(k).innerHTML=cols[k].map(c=>{
+if(!active)return card(c[0],c[1]);
+if(c[0]==='Latest')return '';
+const m=c[1].filter(useMatch);
+return m.length?cardAll(c[0],m):'';}).join('');}}
+function cardAll(title,items){return '<section style="background: #f5faee; border-radius: 12px; padding: 24px 24px 12px; display: flex; flex-direction: column; gap: 12px"><h3 style="margin: 0; '+H+'; font-size: 20px; line-height: 26px; font-weight: 700; letter-spacing: -0.01em">'+esc(title)+'</h3><div style="display: flex; flex-direction: column; gap: 2px">'+items.map(row).join('')+'</div></section>';}
+document.addEventListener('click',e=>{const c=e.target.closest('.chip');if(c){active=(active===c.dataset.u)?null:c.dataset.u;render();return;}if(e.target.closest('.chip-clear')){active=null;render();}});
 document.addEventListener('click',e=>{const b=e.target.closest('.more');if(b){open[b.dataset.t]=!open[b.dataset.t];render();}});
 render();
 const em=document.getElementById('email'),sub=document.querySelector('a.sub');
