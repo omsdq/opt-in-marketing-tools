@@ -16,6 +16,9 @@
 .chip:hover{border-color:#012b1b!important}
 .chip:focus-visible,.chip-clear:focus-visible{outline:2px solid #3d6b14;outline-offset:3px}
 body{margin:0}
+.save:hover{background:#e5ffb8}
+.save:focus-visible,.unsave:focus-visible,.stack-copy:focus-visible,.stack-clear:focus-visible{outline:2px solid #3d6b14;outline-offset:3px}
+#mystack section .stack-copy:focus-visible,#mystack section .stack-clear:focus-visible{outline-color:#bcf35b}
 a{color:inherit}
 .row:hover{background:#ffffff}
 .nav:hover{background:#f5faee}
@@ -62,6 +65,7 @@ a{color:inherit}
 <a class="ghost" href="https://tally.so/r/Ar7eGl" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; height: 44px; box-sizing: border-box; padding: 0 24px; border: 2px solid #012b1b; border-radius: 999px; font-size: 15px; font-weight: 600; color: #012b1b; text-decoration: none">Suggest a tool</a>
 </div>
 
+<div id="mystack"></div>
 <div id="usecases" style="display: flex; flex-wrap: wrap; gap: 8px"></div>
 <div id="usecase-info" aria-live="polite" style="display: none; font-size: 15px; line-height: 22px; color: #4b6358"></div>
 <div id="latest" style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
@@ -295,18 +299,30 @@ const H="font-family: 'Inter Tight', 'SF Pro Display', -apple-system, system-ui,
 const chev='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
 const cols={colLeft:[['Latest',latest],['AI',ai],['AI writing',aiWriting],['Design',design],['Automation',automation],['Social',social],['LinkedIn',linkedin],['Influencer marketing',influencer],['Paid media',paidMedia],['Education',education]],
 colRight:[['Content',content],['Editing',editing],['Operations',operations],['Email',email],['Website building',website],['Research',research],['Creative ops',creativeOps],['CRO',cro],['Local SEO',localSeo],['PR',pr],['Paid ads',paidAds]]};
+const SK='otm-stack';
+const ALL={};for(const k in cols)cols[k].forEach(c=>{if(c[0]!=='Latest')c[1].forEach(i=>{ALL[i.name]=i;});});
+let stack=[];try{stack=JSON.parse(localStorage.getItem(SK)||'[]').filter(n=>ALL[n]);}catch(e){stack=[];}
+function persist(){try{localStorage.setItem(SK,JSON.stringify(stack));}catch(e){}}
+const saved=n=>stack.indexOf(n)>-1;
+function stackUI(){const el=document.getElementById('mystack');if(!el)return;
+if(!stack.length){el.innerHTML='<p style="margin:0;font-size:15px;line-height:22px;color:#4b6358">Tap the bookmark on any tool to build your own stack. It stays in this browser.</p>';return;}
+el.innerHTML='<section style="background:#012b1b;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:16px"><h3 style="margin:0;'+H+';font-size:20px;line-height:26px;font-weight:700;letter-spacing:-0.01em;color:#ffffff">My stack \u00b7 '+stack.length+'</h3><div style="display:flex;flex-wrap:wrap;gap:8px">'+stack.map(n=>'<span style="display:inline-flex;align-items:center;border-radius:999px;background:#e5ffb8;color:#012b1b;font-size:15px;font-weight:600"><a href="'+esc(withUtm(ALL[n].url))+'" target="_blank" rel="noopener noreferrer" style="padding:10px 4px 10px 16px;text-decoration:none">'+esc(n)+'</a><button type="button" class="unsave" data-n="'+esc(n)+'" aria-label="Remove '+esc(n)+' from my stack" style="width:44px;height:44px;border:0;background:transparent;color:#012b1b;font-size:18px;cursor:pointer;border-radius:999px">\u00d7</button></span>').join('')+'</div><div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px"><button type="button" class="stack-copy" style="height:44px;padding:0 24px;border:0;border-radius:999px;background:#bcf35b;color:#012b1b;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer">Copy list</button><button type="button" class="stack-clear" style="min-height:44px;padding:0 16px;border:0;background:transparent;color:#e5ffb8;font-family:inherit;font-size:15px;font-weight:600;text-decoration:underline;cursor:pointer">Clear</button></div></section>';}
 function favicon(url){try{return 'https://www.google.com/s2/favicons?domain='+new URL(url).hostname+'&sz=64';}catch(e){return '';}}
 function withUtm(url){try{const u=new URL(url);if(u.hostname.endsWith('optinformarketing.substack.com'))return url;u.searchParams.set('utm_source','optinformarketing');u.searchParams.set('utm_medium','directory');return u.toString();}catch(e){return url;}}
-function row(i){const fav=favicon(i.url);return '<a class="row" href="'+esc(withUtm(i.url))+'" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: flex-start; gap: 14px; padding: 10px; margin: 0 -10px; border-radius: 12px; text-decoration: none; color: inherit"><div style="width:40px;height:40px;flex:none;border-radius:12px;border:1px solid #c9d6cd;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center;"><img src="'+fav+'" alt="" width="28" height="28" style="width:28px;height:28px;object-fit:contain;display:block;" onerror="this.parentNode.innerHTML=\'<span style=&quot;font-family:Inter Tight,sans-serif;font-size:16px;font-weight:800;color:#012b1b&quot;>'+esc(i.initial)+'</span>\'"></div><div style="min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; line-height: 22px; font-weight: 600">'+esc(i.name)+'</span><span style="font-size: 15px; line-height: 22px; color: #4b6358">'+esc(i.desc)+'</span></div></a>';}
+function rowA(i){const fav=favicon(i.url);return '<a class="row" href="'+esc(withUtm(i.url))+'" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: flex-start; gap: 14px; padding: 10px 54px 10px 10px; margin: 0; border-radius: 12px; text-decoration: none; color: inherit"><div style="width:40px;height:40px;flex:none;border-radius:12px;border:1px solid #c9d6cd;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center;"><img src="'+fav+'" alt="" width="28" height="28" style="width:28px;height:28px;object-fit:contain;display:block;" onerror="this.parentNode.innerHTML=\'<span style=&quot;font-family:Inter Tight,sans-serif;font-size:16px;font-weight:800;color:#012b1b&quot;>'+esc(i.initial)+'</span>\'"></div><div style="min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; line-height: 22px; font-weight: 600">'+esc(i.name)+'</span><span style="font-size: 15px; line-height: 22px; color: #4b6358">'+esc(i.desc)+'</span></div></a>';}
+function row(i){const on=saved(i.name);return '<div style="position:relative;margin:0 -10px">'+rowA(i)+'<button type="button" class="save" data-n="'+esc(i.name)+'" aria-pressed="'+on+'" aria-label="Save '+esc(i.name)+' to my stack" style="position:absolute;right:4px;top:9px;width:44px;height:44px;border:0;border-radius:999px;background:transparent;color:#012b1b;display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="'+(on?'currentColor':'none')+'" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4z"/></svg></button></div>';}
 function card(title,items){const o=!!open[title];const can=items.length>LIMIT;
 return '<section style="background: #f5faee; border-radius: 12px; padding: 24px 24px 12px; display: flex; flex-direction: column; gap: 12px"><h3 style="margin: 0; '+H+'; font-size: 20px; line-height: 26px; font-weight: 700; letter-spacing: -0.01em">'+esc(title)+'</h3><div style="display: flex; flex-direction: column; gap: 2px">'+(o?items:items.slice(0,LIMIT)).map(row).join('')+'</div>'+(can?'<button type="button" class="more" data-t="'+esc(title)+'" aria-expanded="'+o+'" style="align-self: center; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border: 0; background: transparent; font-family: inherit; font-size: 15px; font-weight: 600; color: #012b1b; cursor: pointer">'+(o?'Show less':'See all ('+items.length+')')+' <span style="display: inline-flex; transform: '+(o?'rotate(180deg)':'none')+'">'+chev+'</span></button>':'')+'</section>';}
-function render(){chips();for(const k in cols){document.getElementById(k).innerHTML=cols[k].map(c=>{
+function render(){chips();stackUI();for(const k in cols){document.getElementById(k).innerHTML=cols[k].map(c=>{
 if(!active)return card(c[0],c[1]);
 if(c[0]==='Latest')return '';
 const m=c[1].filter(useMatch);
 return m.length?cardAll(c[0],m):'';}).join('');}}
 function cardAll(title,items){return '<section style="background: #f5faee; border-radius: 12px; padding: 24px 24px 12px; display: flex; flex-direction: column; gap: 12px"><h3 style="margin: 0; '+H+'; font-size: 20px; line-height: 26px; font-weight: 700; letter-spacing: -0.01em">'+esc(title)+'</h3><div style="display: flex; flex-direction: column; gap: 2px">'+items.map(row).join('')+'</div></section>';}
 document.addEventListener('click',e=>{const c=e.target.closest('.chip');if(c){active=(active===c.dataset.u)?null:c.dataset.u;render();return;}if(e.target.closest('.chip-clear')){active=null;render();}});
+document.addEventListener('click',e=>{const s=e.target.closest('.save,.unsave');if(s){const n=s.dataset.n,i=stack.indexOf(n);if(i>-1)stack.splice(i,1);else stack.push(n);persist();render();const f=document.querySelector('.save[data-n="'+CSS.escape(n)+'"]');if(f)f.focus();return;}
+if(e.target.closest('.stack-clear')){stack=[];persist();render();return;}
+const cp=e.target.closest('.stack-copy');if(cp){const txt=stack.map(n=>n+' - '+ALL[n].url).join('\n');if(navigator.clipboard)navigator.clipboard.writeText(txt).then(()=>{cp.textContent='Copied';setTimeout(()=>{cp.textContent='Copy list';},1500);}).catch(()=>{});}});
 document.addEventListener('click',e=>{const b=e.target.closest('.more');if(b){open[b.dataset.t]=!open[b.dataset.t];render();}});
 render();
 const em=document.getElementById('email'),sub=document.querySelector('a.sub');
